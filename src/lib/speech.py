@@ -17,7 +17,7 @@ from hifigan.meldataset import mel_spectrogram, MAX_WAV_VALUE
 
 HIFIGAN_CONFIG = "config_v1"
 USE_ARPABET = False
-SUPERRES_STRENGTH = 10
+SUPERRES_STRENGTH = 1
 
 thisdict = {}
 for line in reversed((open('data/merged.dict.txt', "r").read()).splitlines()):
@@ -89,7 +89,7 @@ class Speech:
         # Load Tacotron2 and Config
         hparams = create_hparams()
         hparams.sampling_rate = 22050
-        hparams.max_decoder_steps = 3000 # Max Duration
+        hparams.max_decoder_steps = 5000 # Max Duration
         hparams.gate_threshold = 0.25 # Model must be 25% sure the clip is over before ending generation
         model = Tacotron2(hparams)
         state_dict = torch.load(tacotron2_path)['state_dict']
