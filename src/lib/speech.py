@@ -4,6 +4,8 @@ import json
 import scipy
 import resampy
 import numpy as np
+from lib.audio_util import play_audio
+from pydub import AudioSegment
 from scipy.io.wavfile import write
 from tacotron2.model import Tacotron2
 from tacotron2.hparams import create_hparams
@@ -90,7 +92,7 @@ class Speech:
         hparams = create_hparams()
         hparams.sampling_rate = 22050
         hparams.max_decoder_steps = 5000 # Max Duration
-        hparams.gate_threshold = 0.25 # Model must be 25% sure the clip is over before ending generation
+        hparams.gate_threshold = 0.5 # Model must be 25% sure the clip is over before ending generation
         model = Tacotron2(hparams)
         state_dict = torch.load(tacotron2_path)['state_dict']
         model.load_state_dict(state_dict)
@@ -98,6 +100,12 @@ class Speech:
 
         self.model = model
         self.hparams = hparams
+
+        max_duration = 20
+        stop_threshold = 0.5
+        
+        self.model.decoder.max_decoder_steps = max_duration * 80
+        self.model.decoder.gate_threshold = stop_threshold
 
     def say(self, text: str) -> None:
         print("Generating '" + text + "'")
@@ -162,4 +170,16 @@ class Speech:
                 sr_mix = wave_out + y_padded
                 sr_mix = sr_mix / normalize
 
-                write("output/test.wav", self.h2.sampling_rate, sr_mix.astype(np.int16))
+                wav_output = "output/output_tts.wav"
+
+                write(wav_output, self.h2.sampling_rate, sr_mix.astype(np.int16))
+
+                # Add silence to end of clip so it does not cut off.
+                silence = AudioSegment.silent(duration=100)
+                tts_segment = AudioSegment.from_wav(wav_output)
+                final = tts_segment + silence
+                final.export(wav_output, format="wav")
+
+                # Play the file
+                play_audio(wav_output)
+

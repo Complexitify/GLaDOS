@@ -5,7 +5,7 @@ import math
 from numpy import finfo
 
 import torch
-from tacotron2.distributed import apply_gradient_allreduce
+from distributed import apply_gradient_allreduce
 import torch.distributed as dist
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
@@ -242,11 +242,12 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                 logger.log_training(
                     reduced_loss, grad_norm, learning_rate, duration, iteration)
 
-            if not is_overflow and (iteration % hparams.iters_per_checkpoint == 0):
-                validate(model, criterion, valset, iteration,
-                         hparams.batch_size, n_gpus, collate_fn, logger,
-                         hparams.distributed_run, rank)
-                if rank == 0:
+            if not is_overflow:
+                if (iteration % hparams.iters_per_validate == 0):
+                    validate(model, criterion, valset, iteration,
+                             hparams.batch_size, n_gpus, collate_fn, logger,
+                             hparams.distributed_run, rank)
+                if rank == 0 and (iteration % hparams.iters_per_checkpoint == 0):
                     checkpoint_path = os.path.join(
                         output_directory, "checkpoint_{}".format(iteration))
                     save_checkpoint(model, optimizer, learning_rate, iteration,

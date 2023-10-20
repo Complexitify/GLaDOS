@@ -9,3 +9,5 @@ matplotlib
 tensorflow
 tensorboard
 resampy
+pydub
+pyaudio
