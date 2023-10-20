@@ -1,5 +1,5 @@
 import tensorflow as tf
-from text import symbols
+from tacotron2.text import symbols
 
 
 class HParamsAlternative(dict):

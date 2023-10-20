@@ -1,6 +1,6 @@
 import sys
 import torch
-from stft import STFT
+from hifigan.stft import STFT
 
 
 class Denoiser(torch.nn.Module):
