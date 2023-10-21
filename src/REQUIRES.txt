@@ -11,3 +11,7 @@ tensorboard
 resampy
 pydub
 pyaudio
+SpeechRecognition
+pocketsphinx
+openai-whisper
+python-kasa
