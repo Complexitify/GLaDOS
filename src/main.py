@@ -16,7 +16,7 @@ SMART_PLUG_IP = "192.168.1.190"
 SMART_PLUG = None
 
 COMMAND_KEYWORDS = [
-    ["repeat", "echo", "eat after me"], # Repeat after me
+    ["repeat", "echo", "eat after me", "after me"], # Repeat after me
     ["turn on light", "turn on the light", "on the light", "on light"], # Turn on the light
     ["turn off light", "turn off the light", "off the light", "off light"], # Turn off the light
 ]
